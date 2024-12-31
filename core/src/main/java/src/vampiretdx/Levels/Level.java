@@ -1,4 +1,7 @@
 package src.vampiretdx.Levels;
+
+import java.util.ArrayList;
+
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -9,16 +12,21 @@ public class Level {
     protected String levelName;
     protected Texture levelTexture;
     protected float[][] PathCoordinate;
+    protected OrthographicCamera cam;
 
     public Level(float spawnX, float spawnY, Texture levelTexture) {
         this.spawnX = spawnX;
         this.spawnY = spawnY;
         this.levelTexture = levelTexture;
     }
-    public void start(float delta, SpriteBatch batch){}
-    public void render(OrthographicCamera cam, SpriteBatch batch) {
+
+    public void start(float delta, SpriteBatch batch) {
+    }
+
+    public void render(SpriteBatch batch) {
         batch.draw(levelTexture, 0, 0, cam.viewportWidth, cam.viewportHeight);
     }
+
     public Float getSpawnX() {
         return spawnX;
     }
@@ -39,4 +47,18 @@ public class Level {
         return PathCoordinate;
     }
 
+    public void setCam(OrthographicCamera cam) {
+        this.cam = cam;
+    }
+
+    public Wave getCurrentWave() {
+        return new Wave();
+    };
+
+    public ArrayList<Wave> getWaweList() {
+        return null;
+    }
+
+    public void setupEnemies() {
+    }
 }

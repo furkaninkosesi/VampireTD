@@ -9,6 +9,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
+
 import src.vampiretdx.Levels.Level;
 
 public class GameScreen implements Screen {
@@ -17,42 +20,53 @@ public class GameScreen implements Screen {
     protected Stage stage;
     protected Level level;
     protected VampireTD game;
-    protected OrthographicCamera cam = new OrthographicCamera();
-
+    protected OrthographicCamera cam;
+    protected Viewport viewport;
+    private final float worldWidth = 800;  // Dünya genişliği
+    private final float worldHeight = 600;
     public GameScreen(VampireTD game, Level level) {
         this.game = game;
         this.level = level;
         this.batch = new SpriteBatch();
         this.stage = new Stage();
-        Gdx.input.setInputProcessor(stage);
-        cam.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()); // Ekran boyutlarını ayarlamak
-        System.out.println(Gdx.graphics.getWidth() + " " + Gdx.graphics.getHeight());
-    }
 
+        cam = new OrthographicCamera();
+        cam.position.set(worldWidth/2, worldHeight/2, 0);
+        cam.update();
+
+
+        viewport = new ExtendViewport(worldWidth, worldHeight, cam); // Oranlı görünüm
+        viewport.apply(); // Viewport'u uygula
+
+
+
+        Gdx.input.setInputProcessor(stage); // Input ayarları
+        level.setCam(cam); // Kamerayı seviyeye ilet
+        level.setupEnemies();
+    }
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-            // Ekrandaki tıklama koordinatlarını al
             float screenX = Gdx.input.getX();
             float screenY = Gdx.input.getY();
-
-            // Kamera ile dünya koordinatlarına dönüştür
-            cam.unproject(screenToWorld(screenX, screenY));
-
-            System.out.println("Maus Tıklanan Koordinat: " + screenX + ", " + screenY);
-            System.out.println("Dünya Koordinatları: " + cam.position.x + ", " + cam.position.y);
-            Vector3 worldCoords = cam.unproject(new Vector3(screenX, screenY, 0));
+            Vector3 worldCoords = screenToWorld(screenX, screenY);
+            System.out.println("Ekran Koordinatları: " + screenX + ", " + screenY);
             System.out.println("Dünya Koordinatları: " + worldCoords.x + ", " + worldCoords.y);
-
-
+            System.out.println("Const Koordinatları: " + Gdx.graphics.getWidth() + ", " + Gdx.graphics.getHeight());
         }
+
         batch.setProjectionMatrix(cam.combined);
+
+
         batch.begin();
-        
-        level.render(cam, batch); // Aktif seviyeyi çiz
+        level.render(batch); // Aktif seviyeyi çiz
         level.start(delta, batch);
+
+
+
         batch.end();
     }
 
@@ -65,9 +79,10 @@ public class GameScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        cam.setToOrtho(false, width, height);
+        viewport.update(width, height);
+        cam.setToOrtho(false, 640, 480); // Kamera merkezini ayarla
+        cam.update();
     }
-
     @Override
     public void show() {
 

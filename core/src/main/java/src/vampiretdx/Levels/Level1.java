@@ -13,17 +13,22 @@ public class Level1 extends Level {
 
     public Level1() {
         super(0, 0, new Texture("level1_map.png"));
-        float[][] PathCoordinates = {
-                { 600.99994f, 203.0f },
-                { 319.99997f, 185.99998f },
-                { 303.99997f, 32.0f }
+        float[][] screenPathCoordinates = {
+                { 565f, 32f },
+                { 187f, 31f },
+                { 106f, 82.0f },
+                { 106f, 82.0f },
+                { 106f, 82.0f },
+                { 106f, 123f },
+                { 388f, 138.0f },
+                { 436, 387.0f }
         };
-        this.PathCoordinate = PathCoordinates;
+        this.PathCoordinate = screenPathCoordinates;
         waweList = new ArrayList<>();
-        setupEnemies();
     }
 
     public void setupEnemies() {
+
         Wave wave1 = new Wave();
         wave1.addEnemy(new Vampire(this));
         wave1.addEnemy(new Vampire(this));
@@ -41,5 +46,14 @@ public class Level1 extends Level {
 
     public void addWave(Wave wave) {
         waweList.add(wave);
+    }
+
+    public ArrayList<Wave> getWaweList() {
+        return waweList;
+    }
+
+    @Override
+    public Wave getCurrentWave() {
+        return waweList.get(currentWave);
     }
 }
