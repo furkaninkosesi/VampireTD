@@ -9,6 +9,8 @@ import src.vampiretdx.Enemies.Enemy;
 public class Wave {
     protected ArrayList<Enemy> enemies;
     protected int wave;
+    private int nextEnemyIndex = 0; // Bir sonraki spawnlanacak düşman indeksi
+    private float spawnTimer = 0;
 
     public Wave() {
         enemies = new ArrayList<>();
@@ -24,10 +26,24 @@ public class Wave {
     }
 
     public void startWave(float delta, Wave wave, SpriteBatch batch) {
-        for (Enemy enemy : enemies) {
-            enemy.render(batch);
-            enemy.move(delta);
+        // Spawn zamanlayıcısını güncelle
+        spawnTimer += delta;
+
+        // Eğer 0.5 saniye geçtiyse sıradaki düşmanı spawnla
+        if (nextEnemyIndex < enemies.size() && spawnTimer >= 0.5f) {
+            // Yeni düşmanı spawnla
+            System.out.println("Spawnlanan düşman: " + nextEnemyIndex); // Kontrol için log
+            spawnTimer = 0; // Zamanlayıcı sıfırla
+            nextEnemyIndex++; // Bir sonraki düşmana geç
         }
 
-    };
+        // Zaten spawnlanmış düşmanları render et ve hareket ettir
+        for (int i = 0; i < nextEnemyIndex; i++) {
+            Enemy enemy = enemies.get(i);
+            if (enemy.isActive()) { // Sadece aktif düşmanları işliyoruz
+                enemy.move(delta);
+                enemy.render(batch);
+            }
+        }
+    }
 }

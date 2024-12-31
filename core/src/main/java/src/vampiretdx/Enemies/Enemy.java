@@ -16,6 +16,7 @@ public class Enemy {
     private int currentPathIndex = 0;
     private float[][] pathCoordinates;
     protected float relativeX, relativeY;
+    private boolean isActive = true;
 
     public Enemy(String type, float health, float speed, Texture texture, Level level) {
         this.type = type;
@@ -32,7 +33,10 @@ public class Enemy {
     }
 
     public void move(float delta) {
+        if (!isActive)
+            return;
         if (currentPathIndex >= pathCoordinates.length - 1) {
+            isActive = false;
             return; // Son koordinata ulaştı
         }
 
@@ -61,12 +65,16 @@ public class Enemy {
     }
 
     public void render(SpriteBatch batch) {
-
-        batch.draw(texture, x, y, 20, 20);
+        if (isActive) {
+            batch.draw(texture, x, y, 25, 25);
+        }
     }
 
     public void dispose() {
         texture.dispose();
     }
 
+    public boolean isActive() {
+        return isActive;
+    }
 }

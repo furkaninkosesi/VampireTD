@@ -22,8 +22,10 @@ public class GameScreen implements Screen {
     protected VampireTD game;
     protected OrthographicCamera cam;
     protected Viewport viewport;
-    private final float worldWidth = 800;  // Dünya genişliği
+    private final float worldWidth = 800; // Dünya genişliği
     private final float worldHeight = 600;
+    private ControlBar controlBar;
+
     public GameScreen(VampireTD game, Level level) {
         this.game = game;
         this.level = level;
@@ -31,43 +33,44 @@ public class GameScreen implements Screen {
         this.stage = new Stage();
 
         cam = new OrthographicCamera();
-        cam.position.set(worldWidth/2, worldHeight/2, 0);
+        cam.position.set(worldWidth / 2, worldHeight / 2, 0);
         cam.update();
-
 
         viewport = new ExtendViewport(worldWidth, worldHeight, cam); // Oranlı görünüm
         viewport.apply(); // Viewport'u uygula
 
-
-
         Gdx.input.setInputProcessor(stage); // Input ayarları
         level.setCam(cam); // Kamerayı seviyeye ilet
         level.setupEnemies();
+
+        controlBar = new ControlBar(stage);
     }
+
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
+        // -----------------------------------------------------------------------------
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             float screenX = Gdx.input.getX();
             float screenY = Gdx.input.getY();
             Vector3 worldCoords = screenToWorld(screenX, screenY);
-            System.out.println("Ekran Koordinatları: " + screenX + ", " + screenY);
             System.out.println("Dünya Koordinatları: " + worldCoords.x + ", " + worldCoords.y);
-            System.out.println("Const Koordinatları: " + Gdx.graphics.getWidth() + ", " + Gdx.graphics.getHeight());
         }
+        // -----------------------------------------------------------------------------
 
         batch.setProjectionMatrix(cam.combined);
 
+        batch.begin();//---------------------------------
 
-        batch.begin();
-        level.render(batch); // Aktif seviyeyi çiz
+        level.render(batch); 
         level.start(delta, batch);
+        
+        batch.end();//---------------------------------
 
 
-
-        batch.end();
+        stage.act(delta); // Sahne animasyonlarını ve güncellemeleri çalıştırır
+        stage.draw();
     }
 
     private com.badlogic.gdx.math.Vector3 screenToWorld(float screenX, float screenY) {
@@ -83,6 +86,7 @@ public class GameScreen implements Screen {
         cam.setToOrtho(false, 640, 480); // Kamera merkezini ayarla
         cam.update();
     }
+
     @Override
     public void show() {
 
@@ -102,6 +106,8 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
+        stage.dispose();
+        batch.dispose();
     }
 
 }
