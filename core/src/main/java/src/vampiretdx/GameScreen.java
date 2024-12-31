@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import src.vampiretdx.Levels.Level;
@@ -25,6 +26,7 @@ public class GameScreen implements Screen {
     private final float worldWidth = 800; // Dünya genişliği
     private final float worldHeight = 600;
     private ControlBar controlBar;
+    private Stage uiStage;
 
     public GameScreen(VampireTD game, Level level) {
         this.game = game;
@@ -32,8 +34,19 @@ public class GameScreen implements Screen {
         this.batch = new SpriteBatch();
         this.stage = new Stage();
 
+        float screenWidth = Gdx.graphics.getWidth();
+        float screenHeight = Gdx.graphics.getHeight();
+        float controlBarHeight = screenHeight * 0.1f;
+        
+        
+        OrthographicCamera uiCamera = new OrthographicCamera();
+        Viewport uiViewport = new FitViewport(screenWidth, controlBarHeight, uiCamera);
+        uiStage = new Stage(uiViewport);
+
+
+
         cam = new OrthographicCamera();
-        cam.position.set(worldWidth / 2, worldHeight / 2, 0);
+        cam.position.set(worldWidth / 2f, worldHeight / 2f, 0);
         cam.update();
 
         viewport = new ExtendViewport(worldWidth, worldHeight, cam); // Oranlı görünüm
@@ -69,8 +82,8 @@ public class GameScreen implements Screen {
         batch.end();//---------------------------------
 
 
-        stage.act(delta); // Sahne animasyonlarını ve güncellemeleri çalıştırır
-        stage.draw();
+        uiStage.act(delta);
+        uiStage.draw();
     }
 
     private com.badlogic.gdx.math.Vector3 screenToWorld(float screenX, float screenY) {

@@ -35,7 +35,26 @@ public class Level1 extends Level {
         wave1.addEnemy(new Vampire(this));
         wave1.addEnemy(new Vampire(this));
         wave1.addEnemy(new Vampire(this));
+        wave1.addEnemy(new Vampire(this));
+        wave1.addEnemy(new Vampire(this));
+        wave1.addEnemy(new Vampire(this));
+        wave1.addEnemy(new Vampire(this));
+        wave1.addEnemy(new Vampire(this));
+        wave1.addEnemy(new Vampire(this));
         this.addWave(wave1);
+        Wave wave2 = new Wave();
+        wave2.addEnemy(new Vampire(this));
+        wave2.addEnemy(new Vampire(this));
+        wave2.addEnemy(new Vampire(this));
+        wave2.addEnemy(new Vampire(this));
+        wave2.addEnemy(new Vampire(this));
+        wave2.addEnemy(new Vampire(this));
+        wave2.addEnemy(new Vampire(this));
+        wave2.addEnemy(new Vampire(this));
+        wave2.addEnemy(new Vampire(this));
+        wave2.addEnemy(new Vampire(this));
+        wave2.addEnemy(new Vampire(this));
+        this.addWave(wave2);
     }
 
     @Override

@@ -51,6 +51,8 @@ public class ControlBar {
     
         // Bar'a Eklemeler
         table.add(selectedTowerLabel).pad(10).expandX().left();
+        table.add(selectedTowerLabel).pad(10).expandX().left();
+
         table.add(nextWaveButton).pad(10).expandX().right();
     
         stage.addActor(table); // Sahneye ekle
