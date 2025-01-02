@@ -19,8 +19,9 @@ public class Tower {
     private float attackCooldown;; // Saniyede bir atış
     private float timeSinceLastAttack = 0f;
     private float x, y; //
-    
-    public Tower(String name, Texture texture, int damage, int price, int range, float bullet_speed, float attackCooldown) {
+
+    public Tower(String name, Texture texture, int damage, int price, int range, float bullet_speed,
+            float attackCooldown) {
         this.name = name;
         this.texture = texture;
         this.damage = damage;
@@ -29,9 +30,10 @@ public class Tower {
         this.bullet_speed = bullet_speed;
         this.attackCooldown = attackCooldown;
     }
+
     public void update(float deltaTime, ArrayList<Enemy> enemies) {
         timeSinceLastAttack += deltaTime;
-    
+
         // Atış yap
         if (timeSinceLastAttack >= attackCooldown) {
             Enemy target = findClosestEnemy(enemies);
@@ -43,19 +45,19 @@ public class Tower {
             for (int i = projectiles.size() - 1; i >= 0; i--) { // Tersten döngü
                 Arrow arrow = projectiles.get(i);
                 arrow.update(deltaTime);
-    
+
                 // Eğer ok aktif değilse listeden kaldır
                 if (!arrow.isActive()) {
                     projectiles.remove(i);
                 }
             }
         }
-    
+
         // Okları güncelle ve çarpışmaları kontrol et
         ArrayList<Arrow> arrowsToRemove = new ArrayList<>();
         for (Arrow arrow : projectiles) {
             arrow.update(deltaTime);
-    
+
             for (Enemy enemy : enemies) {
                 if (arrow.checkCollision(enemy)) {
                     enemy.takeDamage(arrow.getDamage());
@@ -64,15 +66,14 @@ public class Tower {
                 }
             }
         }
-    
+
         // Çarpışan okları kaldır
         projectiles.removeAll(arrowsToRemove);
-    
+
         // Ölen düşmanları kaldır
         enemies.removeIf(enemy -> enemy.getHealth() <= 0);
     }
 
-    
     private Enemy findClosestEnemy(ArrayList<Enemy> enemies) {
         Enemy closest = null;
         float closestDistance = Float.MAX_VALUE;
@@ -98,16 +99,29 @@ public class Tower {
     public ArrayList<Arrow> getProjectiles() {
         return projectiles;
     }
+
     public void render(Batch batch) {
         // Tower'ı çiz
-        batch.draw(texture, x, y, 50,50);
+        batch.draw(texture, x, y, 50, 50);
 
         // Okları çiz
         for (Arrow arrow : projectiles) {
-            batch.draw(arrow.getTexture(), arrow.getX(), arrow.getY(), 50, 50);
-            System.out.println(arrow.getX() +" + "+ arrow.getY());
+            // batch.draw(arrow.getTexture(), arrow.getX(), arrow.getY(), 50, 50);
+            batch.draw(
+                arrow.getTexture(),       // Texture
+                arrow.getX(), arrow.getY(), // Pozisyon
+                25, 25,                   // Origin (döndürme merkezi)
+                50, 50,                   // Boyut
+                1, 1,                     // Ölçekleme
+                arrow.getRotation(),      // Rotasyon açısı
+                0, 0,                     // Texture kaynağı X ve Y
+                arrow.getTexture().getWidth(), arrow.getTexture().getHeight(), // Texture kaynağı genişlik ve yükseklik
+                false, false              // Flip X, Flip Y
+            );
+            System.out.println(arrow.getX() + " + " + arrow.getY());
         }
     }
+
     public String getName() {
         return name;
     }
@@ -171,6 +185,7 @@ public class Tower {
     public void setBullet_speed(float bullet_speed) {
         this.bullet_speed = bullet_speed;
     }
+
     public void setPosition(float x, float y) {
         this.x = x;
         this.y = y;

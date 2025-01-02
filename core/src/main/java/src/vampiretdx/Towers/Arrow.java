@@ -12,7 +12,8 @@ public class Arrow {
     private Texture texture; // Okun görseli
     private boolean hitTarget = false; // Hedefe ulaşıp ulaşmadığını kontrol eder
     private boolean active = true;
-    private float timeSinceLastMove = 0; 
+    private float timeSinceLastMove = 0;
+    private float rotation;
 
     public Arrow(float x, float y, float targetX, float targetY, float speed, int damage, Texture texture) {
         this.x = x;
@@ -23,11 +24,17 @@ public class Arrow {
         this.damage = damage;
         this.texture = texture;
     }
-    public boolean isActive(){
+    public float getRotation() {
+        return rotation;
+    }
+    
+    public boolean isActive() {
         return active;
     }
+
     public void update(float deltaTime) {
         // Hedefe doğru hareket et
+        rotation = (float) Math.toDegrees(Math.atan2(targetY - y, targetX - x));
         float dx = targetX - x;
         float dy = targetY - y;
         float distance = (float) Math.sqrt(dx * dx + dy * dy);
@@ -57,11 +64,11 @@ public class Arrow {
         float dx = enemy.getX() - x;
         float dy = enemy.getY() - y;
         float distance = (float) Math.sqrt(dx * dx + dy * dy);
-    
+
         // Çarpışma mesafesi: 10 (örnek bir değer, okun boyutuna göre ayarla)
         return distance <= 10;
     }
-    
+
     public boolean hasHitTarget() {
         return hitTarget;
     }

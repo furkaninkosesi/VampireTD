@@ -79,8 +79,8 @@ public class GameScreen implements Screen {
         level.render(batch);
         level.start(delta, batch);
         batch.end();
-
         controlBar.render(batch);
+
         for (Tower tower : controlBar.getPlacedTowers()) {
             tower.update(delta, level.getCurrentWave().getEnemies());
         }
@@ -89,6 +89,8 @@ public class GameScreen implements Screen {
             tower.render(batch);
         }
         batch.end();
+
+        
         stage.act(delta);
         stage.draw();
 

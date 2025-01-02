@@ -30,7 +30,7 @@ public class Wave {
         spawnTimer += delta;
 
         // Eğer 0.5 saniye geçtiyse sıradaki düşmanı spawnla
-        if (nextEnemyIndex < enemies.size() && spawnTimer >= 0.5f) {
+        if (nextEnemyIndex < enemies.size() && spawnTimer >= 0.3f) {
             // Yeni düşmanı spawnla
             System.out.println("Spawnlanan düşman: " + nextEnemyIndex); // Kontrol için log
             spawnTimer = 0; // Zamanlayıcı sıfırla
