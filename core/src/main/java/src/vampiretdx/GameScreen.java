@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.InputMultiplexer;
 
 import src.vampiretdx.Levels.Level;
+import src.vampiretdx.Towers.Tower;
 
 public class GameScreen implements Screen {
     protected SpriteBatch batch;
@@ -37,28 +38,20 @@ public class GameScreen implements Screen {
         cam = new OrthographicCamera();
         uiCamera = new OrthographicCamera();
 
-        // Oyun ve UI için viewport'ları tanımla
         viewport = new FitViewport(worldWidth, worldHeight, cam);
         uiViewport = new FitViewport(worldWidth * 0.2f, worldHeight, uiCamera);
 
-        // Stage'leri oluştur
         stage = new Stage(viewport, batch);
         uiStage = new Stage(uiViewport, batch);
 
-        // Kamera ayarları
         cam.position.set(worldWidth / 2f, worldHeight / 2f, 0);
         cam.update();
         uiCamera.update();
 
-        // ControlBar
         controlBar = new ControlBar(uiStage);
-
-        uiStage.isDebugAll();
-        stage.isDebugAll();
-        // InputMultiplexer ile input işlemlerini iki sahneye yönlendir
+        
         Gdx.input.setInputProcessor(new InputMultiplexer(uiStage, stage));
 
-        // Level ayarları
         level.setCam(cam);
         level.setupEnemies();
         
@@ -88,7 +81,14 @@ public class GameScreen implements Screen {
         batch.end();
 
         controlBar.render(batch);
-
+        for (Tower tower : controlBar.getPlacedTowers()) {
+            tower.update(delta, level.getCurrentWave().getEnemies());
+        }
+        batch.begin();
+        for (Tower tower : controlBar.getPlacedTowers()) {
+            tower.render(batch);
+        }
+        batch.end();
         stage.act(delta);
         stage.draw();
 
@@ -100,25 +100,21 @@ public class GameScreen implements Screen {
         uiStage.draw();
     }
     private com.badlogic.gdx.math.Vector3 screenToWorld(float screenX, float screenY) {
-        // Ekrandaki tıklamayı kamera ile dünya koordinatlarına dönüştür
         com.badlogic.gdx.math.Vector3 worldCoords = new com.badlogic.gdx.math.Vector3(screenX, screenY, 0);
-        cam.unproject(worldCoords); // Koordinatları kameranın perspektifine göre dönüştür
+        cam.unproject(worldCoords);
         return worldCoords;
     }
     @Override
     public void resize(int width, int height) {
-        // Ekran boyutlarını böl
         int gameWidth = (int) (width * 0.8f);
         int uiWidth = width - gameWidth;
 
-        // Viewport'ları güncelle
         viewport.update(gameWidth, height, true);
         viewport.setScreenBounds(0, 0, gameWidth, height);
 
         uiViewport.update(uiWidth, height, true);
         uiViewport.setScreenBounds(gameWidth, 0, uiWidth, height);
 
-        // Kameraları yeniden yapılandır
         cam.setToOrtho(false, worldWidth, worldHeight);
         cam.update();
         uiCamera.setToOrtho(false, worldWidth * 0.2f, worldHeight);

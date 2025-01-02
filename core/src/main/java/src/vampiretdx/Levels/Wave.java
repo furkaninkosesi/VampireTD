@@ -36,9 +36,9 @@ public class Wave {
             spawnTimer = 0; // Zamanlayıcı sıfırla
             nextEnemyIndex++; // Bir sonraki düşmana geç
         }
-
+        enemies.removeIf(enemy -> !enemy.isActive());
         // Zaten spawnlanmış düşmanları render et ve hareket ettir
-        for (int i = 0; i < nextEnemyIndex; i++) {
+        for (int i = 0; i < nextEnemyIndex && i < enemies.size(); i++) {
             Enemy enemy = enemies.get(i);
             if (enemy.isActive()) { // Sadece aktif düşmanları işliyoruz
                 enemy.move(delta);
