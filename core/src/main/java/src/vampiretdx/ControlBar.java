@@ -1,5 +1,7 @@
 package src.vampiretdx;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Texture;
@@ -14,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
+import src.vampiretdx.Towers.ArcherTower;
 import src.vampiretdx.Towers.Tower;
 
 public class ControlBar {
@@ -24,6 +27,7 @@ public class ControlBar {
     private boolean isPlacingTower = false;
     private float mouseX, mouseY;
     private Tower selectedTower;
+    private ArrayList<Tower> placedTowers = new ArrayList<>();
 
     public ControlBar(Stage stage) {
         this.stage = stage;
@@ -60,22 +64,14 @@ public class ControlBar {
 
         // Create tower buttons
         Tower[] towers = {
-                new Tower("Archer Tower", new Texture(Gdx.files.internal("towers/archer_tower.png")), 10, 100, 150,
-                        1.0f),
-                new Tower("Archer Tower", new Texture(Gdx.files.internal("towers/archer_tower.png")), 10, 100, 150,
-                        1.0f),
-                new Tower("Archer Tower", new Texture(Gdx.files.internal("towers/archer_tower.png")), 10, 100, 150,
-                        1.0f),
-                new Tower("Archer Tower", new Texture(Gdx.files.internal("towers/archer_tower.png")), 10, 100, 150,
-                        1.0f),
-                new Tower("Archer Tower", new Texture(Gdx.files.internal("towers/archer_tower.png")), 10, 100, 150,
-                        1.0f),
-                new Tower("Archer Tower", new Texture(Gdx.files.internal("towers/archer_tower.png")), 10, 100, 150,
-                        1.0f),
-                new Tower("Archer Tower", new Texture(Gdx.files.internal("towers/archer_tower.png")), 10, 100, 150,
-                        1.0f),
-                new Tower("Archer Tower", new Texture(Gdx.files.internal("towers/archer_tower.png")), 10, 100, 150,
-                        1.0f)
+                new ArcherTower(),
+                new ArcherTower(),
+                new ArcherTower(),
+                new ArcherTower(),
+                new ArcherTower(),
+                new ArcherTower(),
+                new ArcherTower(),
+                new ArcherTower()
                 // Add more towers here as needed
         };
 
@@ -99,14 +95,17 @@ public class ControlBar {
             towerButton.addListener(new InputListener() {
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                     isPlacingTower = true;
-                    selectedTower = currentTower;
-
+                    selectedTower = createNewTower(currentTower);
                     System.out.println("Tower placement mode activated: " + selectedTower.name);
                     return true;
                 }
 
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                     isPlacingTower = false;
+                    if (selectedTower != null) {
+                        // Yerleştirme işlemi
+                        placeTower(mouseX, mouseY);
+                    }
                     selectedTower = null;
                     System.out.println("Touch released!");
                 }
@@ -117,6 +116,34 @@ public class ControlBar {
 
         // Bottom section (End game button)
         // ... (Same as before)
+    }
+
+    private void placeTower(float x, float y) {
+        if (selectedTower != null) {
+            Tower newTower = createTowerInstance(selectedTower, x, y);
+            placedTowers.add(newTower); // Yerleştirilen kuleyi listeye ekle
+            System.out.println("Tower placed at: " + x + ", " + y);
+        }
+    }
+
+    private Tower createTowerInstance(Tower tower, float x, float y) {
+        Tower newTower = null;
+        // Kuleyi yeni bir instance olarak yarat
+        if (tower instanceof ArcherTower) {
+            newTower = new ArcherTower(); // Örneğin, Archer Tower yarat
+        }
+        // Diğer kule türleri eklenebilir
+        newTower.setPosition(x, y); // Kuleyi belirtilen koordinatlara yerleştir
+        return newTower;
+    }
+
+    private Tower createNewTower(Tower tower) {
+        if (tower instanceof ArcherTower) {
+            return new ArcherTower();
+        } else if (tower instanceof ArcherTower) {
+            return new ArcherTower();
+        }
+        return null; // If no type matches
     }
 
     private ImageButton createButton(Texture texture) {
@@ -133,9 +160,15 @@ public class ControlBar {
         if (isPlacingTower && selectedTower != null) {
             batch.begin();
             batch.draw(selectedTower.texture, mouseX, mouseY, selectedTower.getTexture().getWidth() * 0.1f,
-            selectedTower.getTexture().getHeight()* 0.1f);
+                    selectedTower.getTexture().getHeight() * 0.1f);
             batch.end();
         }
+        batch.begin();
+        for (Tower tower : placedTowers) {
+            batch.draw(tower.getTexture(), tower.getX(), tower.getY(), tower.getTexture().getWidth()* 0.1f,
+                    tower.getTexture().getHeight()* 0.1f);
+        }
+        batch.end();
     }
 
     public void updateMoney(int newMoney) {

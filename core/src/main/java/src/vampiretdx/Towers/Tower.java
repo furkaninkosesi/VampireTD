@@ -5,13 +5,13 @@ import com.badlogic.gdx.graphics.Texture;
 public class Tower {
     public String name;
     public Texture texture;
-
-    int rank = 0;
-    int damage;
-    int price;
-    int range;
-    float bullet_speed;
-
+    public int rank = 0;
+    public int damage;
+    public int price;
+    public int range;
+    public float bullet_speed;
+    private float x, y; //
+    
     public Tower(String name, Texture texture, int damage, int price, int range, float bullet_speed) {
         this.name = name;
         this.texture = texture;
@@ -19,6 +19,7 @@ public class Tower {
         this.price = price;
         this.range = range;
         this.bullet_speed = bullet_speed;
+        
     }
 
     public String getName() {
@@ -69,11 +70,23 @@ public class Tower {
         this.range = range;
     }
 
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
     public float getBullet_speed() {
         return bullet_speed;
     }
 
     public void setBullet_speed(float bullet_speed) {
         this.bullet_speed = bullet_speed;
+    }
+    public void setPosition(float x, float y) {
+        this.x = x;
+        this.y = y;
     }
 }
