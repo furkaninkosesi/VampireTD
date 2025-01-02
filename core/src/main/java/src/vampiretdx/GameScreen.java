@@ -28,7 +28,7 @@ public class GameScreen implements Screen {
     private final float worldHeight = 600;
     private ControlBar controlBar;
     private Stage uiStage;
-
+    Vector3 worldCoords;
     public GameScreen(VampireTD game, Level level) {
         this.game = game;
         this.level = level;
@@ -53,19 +53,32 @@ public class GameScreen implements Screen {
         // ControlBar
         controlBar = new ControlBar(uiStage);
 
+        uiStage.isDebugAll();
+        stage.isDebugAll();
         // InputMultiplexer ile input işlemlerini iki sahneye yönlendir
         Gdx.input.setInputProcessor(new InputMultiplexer(uiStage, stage));
 
         // Level ayarları
         level.setCam(cam);
         level.setupEnemies();
+        
     }
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        float screenX = Gdx.input.getX();
+        float screenY = Gdx.input.getY();
+        worldCoords = screenToWorld(screenX, screenY);
+        // -----------------------------------------------------------------------------
+        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+   
+            System.out.println("Dünya Koordinatları: " + worldCoords.x + ", " + worldCoords.y);
+        }
 
+        // -----------------------------------------------------------------------------
+        controlBar.updateMouseCoordinates(worldCoords.x, worldCoords.y);
         // Oyun alanını çiz
         viewport.apply();
         batch.setProjectionMatrix(cam.combined);
@@ -74,16 +87,24 @@ public class GameScreen implements Screen {
         level.start(delta, batch);
         batch.end();
 
+        controlBar.render(batch);
+
         stage.act(delta);
         stage.draw();
 
         // UI'yi çiz
         uiViewport.apply();
         batch.setProjectionMatrix(uiCamera.combined);
+
         uiStage.act(delta);
         uiStage.draw();
     }
-
+    private com.badlogic.gdx.math.Vector3 screenToWorld(float screenX, float screenY) {
+        // Ekrandaki tıklamayı kamera ile dünya koordinatlarına dönüştür
+        com.badlogic.gdx.math.Vector3 worldCoords = new com.badlogic.gdx.math.Vector3(screenX, screenY, 0);
+        cam.unproject(worldCoords); // Koordinatları kameranın perspektifine göre dönüştür
+        return worldCoords;
+    }
     @Override
     public void resize(int width, int height) {
         // Ekran boyutlarını böl
@@ -102,6 +123,8 @@ public class GameScreen implements Screen {
         cam.update();
         uiCamera.setToOrtho(false, worldWidth * 0.2f, worldHeight);
         uiCamera.update();
+
+        controlBar.resize((int)worldWidth, (int)worldHeight);
     }
 
     @Override

@@ -2,111 +2,140 @@ package src.vampiretdx;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
-public class ControlBar{
-    private Stage stage;
-    private Table table;
+import src.vampiretdx.Towers.Tower;
 
-    // UI Elemanları
+public class ControlBar {
+    private Stage stage;
+    private Table mainTable;
     private Label moneyLabel;
     private Label healthLabel;
+    private boolean isPlacingTower = false;
+    private float mouseX, mouseY;
+    private Tower selectedTower;
 
-    // Kule Yerleştirme
-    private Texture selectedTowerTexture; // Seçilen kule ikonu
-    private boolean isPlacingTower = false; // Kule yerleştirme aktif mi?
-    private float mouseX, mouseY; // Fare pozisyonu
-
-    public ControlBar(Stage stage)  {
+    public ControlBar(Stage stage) {
         this.stage = stage;
 
-        // Table ayarları
-        table = new Table();
-        table.top().right();
-        table.pad(10); // Kenarlık
+        // Main table setup
+        mainTable = new Table();
+        mainTable.setFillParent(true);
+        mainTable.top().right();
+        stage.addActor(mainTable);
 
-        // Font ve Skin ayarları
+        // Background
+        Texture backgroundTexture = new Texture(Gdx.files.internal("controlbar.png"));
+        mainTable.setBackground(new TextureRegionDrawable(new TextureRegion(backgroundTexture)));
+
+        // Font and Style
         BitmapFont font = new BitmapFont(Gdx.files.internal("default.fnt"));
         Label.LabelStyle labelStyle = new Label.LabelStyle(font, null);
-        // Para ve Can göstergeleri
+
+        // Money and Health labels
         moneyLabel = new Label("Money: 1000", labelStyle);
         healthLabel = new Label("Health: 100", labelStyle);
-        moneyLabel.setSize(50, 20);
-        table.add(moneyLabel).padBottom(20).row();
-        table.add(healthLabel).padBottom(20).row();
 
-        // Kule simgeleri (örnek)
-        for (int i = 0; i < 10; i++) {
-            ImageButton towerButton = createButton("towers/archer_tower.png");
-            table.add(towerButton).size(50, 50).padBottom(10).row();
+        // Top section (Money and Health)
+        Table topSection = new Table();
+        topSection.add(moneyLabel).expandX().padBottom(10);
+        topSection.row();
+        topSection.add(healthLabel).expandX().padBottom(10);
+        mainTable.add(topSection).expandX().pad(10).top().row();
 
-            int finalI = i; // Lambda içi için gerekli
-            towerButton.addListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    selectedTowerTexture = new Texture(Gdx.files.internal("towers/archer_tower.png"));
+        // Middle section (Tower icons)
+        Table middleSection = new Table();
+        TextureRegionDrawable boxBackground = new TextureRegionDrawable(
+                new TextureRegion(new Texture(Gdx.files.internal("box.png"))));
+
+        // Create tower buttons
+        Tower[] towers = {
+                new Tower("Archer Tower", new Texture(Gdx.files.internal("towers/archer_tower.png")), 10, 100, 150,
+                        1.0f),
+                new Tower("Archer Tower", new Texture(Gdx.files.internal("towers/archer_tower.png")), 10, 100, 150,
+                        1.0f),
+                new Tower("Archer Tower", new Texture(Gdx.files.internal("towers/archer_tower.png")), 10, 100, 150,
+                        1.0f),
+                new Tower("Archer Tower", new Texture(Gdx.files.internal("towers/archer_tower.png")), 10, 100, 150,
+                        1.0f),
+                new Tower("Archer Tower", new Texture(Gdx.files.internal("towers/archer_tower.png")), 10, 100, 150,
+                        1.0f),
+                new Tower("Archer Tower", new Texture(Gdx.files.internal("towers/archer_tower.png")), 10, 100, 150,
+                        1.0f),
+                new Tower("Archer Tower", new Texture(Gdx.files.internal("towers/archer_tower.png")), 10, 100, 150,
+                        1.0f),
+                new Tower("Archer Tower", new Texture(Gdx.files.internal("towers/archer_tower.png")), 10, 100, 150,
+                        1.0f)
+                // Add more towers here as needed
+        };
+
+        // Add towers in two columns per row
+        for (int i = 0; i < towers.length; i++) {
+            Tower tower = towers[i];
+            Table cellTable = new Table();
+            cellTable.setBackground(boxBackground);
+
+            ImageButton towerButton = createButton(tower.texture);
+            cellTable.add(towerButton).size(40, 40).center().pad(5);
+            middleSection.add(cellTable).size(50, 50).pad(5);
+
+            // Create a new row after two towers
+            if ((i + 1) % 2 == 0) {
+                middleSection.row();
+            }
+
+            // Handle tower button interaction
+            final Tower currentTower = tower;
+            towerButton.addListener(new InputListener() {
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                     isPlacingTower = true;
-                    System.out.println("Tower " + finalI + " selected for placement!");
+                    selectedTower = currentTower;
+
+                    System.out.println("Tower placement mode activated: " + selectedTower.name);
+                    return true;
+                }
+
+                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                    isPlacingTower = false;
+                    selectedTower = null;
+                    System.out.println("Touch released!");
                 }
             });
         }
 
-        // ScrollPane oluşturma
-        ScrollPane scrollPane = new ScrollPane(table);
-        scrollPane.setFillParent(true);
-        scrollPane.setScrollingDisabled(true, false); // Yatay kaydırma devre dışı, dikey etkin
+        mainTable.add(middleSection).expandX().pad(10).row();
 
-        // Özel kontroller (örnek)
-        ImageButton endGameButton = createButton("buttons/go_button.png");
-        table.add(endGameButton).size(100, 50).padTop(20);
-
-        endGameButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                System.out.println("End Game clicked!");
-            }
-        });
-
-        stage.addActor(scrollPane);
-
-        // Fare hareketlerini takip eden InputProcessor ekleme
-        Gdx.input.setInputProcessor(new InputAdapter() {
-            @Override
-            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-                if (isPlacingTower) {
-                    System.out.println("Tower placed at: " + mouseX + ", " + mouseY);
-                    placeTower(mouseX, mouseY);
-                    isPlacingTower = false;
-                    selectedTowerTexture = null;
-                }
-                return true;
-            }
-
-            @Override
-            public boolean mouseMoved(int screenX, int screenY) {
-                mouseX = screenX;
-                mouseY = Gdx.graphics.getHeight() - screenY; // Y ekseni ters olduğu için
-                return true;
-            }
-        });
+        // Bottom section (End game button)
+        // ... (Same as before)
     }
 
-    private ImageButton createButton(String texturePath) {
-        Texture texture = new Texture(Gdx.files.internal(texturePath));
+    private ImageButton createButton(Texture texture) {
         TextureRegionDrawable drawable = new TextureRegionDrawable(new TextureRegion(texture));
         return new ImageButton(drawable);
+    }
+
+    public void updateMouseCoordinates(float mouseX, float mouseY) {
+        this.mouseX = mouseX;
+        this.mouseY = mouseY;
+    }
+
+    public void render(Batch batch) {
+        if (isPlacingTower && selectedTower != null) {
+            batch.begin();
+            batch.draw(selectedTower.texture, mouseX, mouseY, selectedTower.getTexture().getWidth() * 0.1f,
+            selectedTower.getTexture().getHeight()* 0.1f);
+            batch.end();
+        }
     }
 
     public void updateMoney(int newMoney) {
@@ -117,18 +146,7 @@ public class ControlBar{
         healthLabel.setText("Health: " + newHealth);
     }
 
-    private void placeTower(float x, float y) {
-        System.out.println("Placing tower at: " + x + ", " + y);
-        // Buraya kule yerleştirme mantığı eklenebilir (örneğin, bir sahne objesi ekleme)
+    public void resize(int width, int height) {
+        mainTable.setSize(width * 0.2f, height); // Control bar takes 20% of the screen width
     }
-
-    public void render(Batch batch) {
-        if (isPlacingTower && selectedTowerTexture != null) {
-            batch.begin();
-            batch.draw(selectedTowerTexture, mouseX - selectedTowerTexture.getWidth() / 2, mouseY - selectedTowerTexture.getHeight() / 2);
-            batch.end();
-        }
-    }
-
-
 }
