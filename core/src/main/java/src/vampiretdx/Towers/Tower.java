@@ -15,7 +15,7 @@ public class Tower {
     public int price;
     public int range;
     public float bullet_speed;
-    private ArrayList<Arrow> projectiles = new ArrayList<>();
+    private ArrayList<Projectiles> projectiles = new ArrayList<>();
     private float attackCooldown;; // Saniyede bir atış
     private float timeSinceLastAttack = 0f;
     private float x, y; //
@@ -42,33 +42,32 @@ public class Tower {
                 timeSinceLastAttack = 0f;
             }
 
-            for (int i = projectiles.size() - 1; i >= 0; i--) { // Tersten döngü
-                Arrow arrow = projectiles.get(i);
-                arrow.update(deltaTime);
+            for (int i = projectiles.size() - 1; i >= 0; i--) {
+                Projectiles projectile = projectiles.get(i);
+                projectile.update(deltaTime);
 
                 // Eğer ok aktif değilse listeden kaldır
-                if (!arrow.isActive()) {
+                if (!projectile.isActive()) {
                     projectiles.remove(i);
                 }
             }
         }
 
-        // Okları güncelle ve çarpışmaları kontrol et
-        ArrayList<Arrow> arrowsToRemove = new ArrayList<>();
-        for (Arrow arrow : projectiles) {
-            arrow.update(deltaTime);
+        ArrayList<Projectiles> projectilesToRemove = new ArrayList<>();
+        for (Projectiles projectile : projectiles) {
+            projectile.update(deltaTime);
 
             for (Enemy enemy : enemies) {
-                if (arrow.checkCollision(enemy)) {
-                    enemy.takeDamage(arrow.getDamage());
-                    arrowsToRemove.add(arrow); // Ok çarptığında yok edilir
+                if (projectile.checkCollision(enemy)) {
+                    enemy.takeDamage(projectile.getDamage());
+                    projectilesToRemove.add(projectile); 
                     break;
                 }
             }
         }
 
         // Çarpışan okları kaldır
-        projectiles.removeAll(arrowsToRemove);
+        projectiles.removeAll(projectilesToRemove);
 
         // Ölen düşmanları kaldır
         enemies.removeIf(enemy -> enemy.getHealth() <= 0);
@@ -92,11 +91,11 @@ public class Tower {
     }
 
     private void shootAt(Enemy enemy) {
-        Arrow arrow = new Arrow(x, y, enemy.getX(), enemy.getY(), bullet_speed, damage, new Texture("arrow.png"));
-        projectiles.add(arrow);
+        Projectiles projectile = new Projectiles(x, y, enemy.getX(), enemy.getY(), bullet_speed, damage, new Texture("arrow.png"));
+        projectiles.add(projectile);
     }
 
-    public ArrayList<Arrow> getProjectiles() {
+    public ArrayList<Projectiles> getProjectiles() {
         return projectiles;
     }
 
@@ -105,20 +104,19 @@ public class Tower {
         batch.draw(texture, x, y, 50, 50);
 
         // Okları çiz
-        for (Arrow arrow : projectiles) {
-            // batch.draw(arrow.getTexture(), arrow.getX(), arrow.getY(), 50, 50);
+        for (Projectiles projectile : projectiles) {
+            // batch.draw(projectile.getTexture(), projectile.getX(), projectile.getY(), 50, 50);
             batch.draw(
-                arrow.getTexture(),       // Texture
-                arrow.getX(), arrow.getY(), // Pozisyon
-                25, 25,                   // Origin (döndürme merkezi)
-                50, 50,                   // Boyut
-                1, 1,                     // Ölçekleme
-                arrow.getRotation(),      // Rotasyon açısı
-                0, 0,                     // Texture kaynağı X ve Y
-                arrow.getTexture().getWidth(), arrow.getTexture().getHeight(), // Texture kaynağı genişlik ve yükseklik
-                false, false              // Flip X, Flip Y
-            );
-            System.out.println(arrow.getX() + " + " + arrow.getY());
+                    projectile.getTexture(),
+                    projectile.getX(), projectile.getY(),
+                    25, 25,
+                    50, 50,
+                    1, 1,
+                    projectile.getRotation(),
+                    0, 0,
+                    projectile.getTexture().getWidth(), projectile.getTexture().getHeight(),
+                    false, false);
+            System.out.println(projectile.getX() + " + " + projectile.getY());
         }
     }
 

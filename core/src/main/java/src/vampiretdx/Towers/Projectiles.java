@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 
 import src.vampiretdx.Enemies.Enemy;
 
-public class Arrow {
+public class Projectiles {
     private float x, y; // Okun pozisyonu
     private float speed; // Okun hızı
     private int damage; // Okun hasarı
@@ -15,7 +15,7 @@ public class Arrow {
     private float timeSinceLastMove = 0;
     private float rotation;
 
-    public Arrow(float x, float y, float targetX, float targetY, float speed, int damage, Texture texture) {
+    public Projectiles(float x, float y, float targetX, float targetY, float speed, int damage, Texture texture) {
         this.x = x;
         this.y = y;
         this.targetX = targetX;
@@ -64,8 +64,6 @@ public class Arrow {
         float dx = enemy.getX() - x;
         float dy = enemy.getY() - y;
         float distance = (float) Math.sqrt(dx * dx + dy * dy);
-
-        // Çarpışma mesafesi: 10 (örnek bir değer, okun boyutuna göre ayarla)
         return distance <= 10;
     }
 

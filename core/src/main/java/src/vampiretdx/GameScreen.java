@@ -5,11 +5,11 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.InputMultiplexer;
 
@@ -17,80 +17,99 @@ import src.vampiretdx.Levels.Level;
 import src.vampiretdx.Towers.Tower;
 
 public class GameScreen implements Screen {
-    protected SpriteBatch batch;
-    protected Texture mapTexture;
-    protected Stage stage;
-    protected Level level;
-    protected VampireTD game;
-    protected OrthographicCamera cam;
-    protected OrthographicCamera uiCamera;
-    protected Viewport viewport, uiViewport;
-    private final float worldWidth = 800;
-    private final float worldHeight = 600;
-    private ControlBar controlBar;
+    private SpriteBatch batch;
+    private Stage stage;
     private Stage uiStage;
-    Vector3 worldCoords;
+    private Stage barStage;
+    private Level level;
+    private VampireTD game;
+
+    private OrthographicCamera cam;
+    private OrthographicCamera uiCamera;
+    private OrthographicCamera barCamera;
+
+    private Viewport viewport;
+    private Viewport uiViewport;
+    private Viewport barViewport;
+
+    private final float WORLD_WIDTH = 800;
+    private final float WORLD_HEIGHT = 600;
+
+    private ControlBar controlBar;
+    private Vector3 worldCoords;
+
     public GameScreen(VampireTD game, Level level) {
         this.game = game;
         this.level = level;
         this.batch = new SpriteBatch();
 
+        // Kameralar
         cam = new OrthographicCamera();
         uiCamera = new OrthographicCamera();
+        barCamera = new OrthographicCamera();
 
-        viewport = new FitViewport(worldWidth, worldHeight, cam);
-        uiViewport = new FitViewport(worldWidth * 0.2f, worldHeight, uiCamera);
+        // Viewportlar (StretchViewport kullanıldı)
+        viewport = new StretchViewport(WORLD_WIDTH, WORLD_HEIGHT, cam);
+        uiViewport = new StretchViewport(WORLD_WIDTH * 0.2f, WORLD_HEIGHT, uiCamera);
+        barViewport = new StretchViewport(WORLD_WIDTH, WORLD_HEIGHT*0.2f, barCamera);
+
 
         stage = new Stage(viewport, batch);
         uiStage = new Stage(uiViewport, batch);
+        barStage = new Stage(barViewport, batch);
 
-        cam.position.set(worldWidth / 2f, worldHeight / 2f, 0);
-        cam.update();
-        uiCamera.update();
+        uiStage.setDebugAll(true);
 
         controlBar = new ControlBar(uiStage);
-        
         Gdx.input.setInputProcessor(new InputMultiplexer(uiStage, stage));
+
+        cam.position.set(WORLD_WIDTH / 2f, WORLD_HEIGHT / 2f, 0);
+        cam.update();
+
+        uiCamera.position.set(WORLD_WIDTH * 0.1f, WORLD_HEIGHT / 2f, 0);
+        uiCamera.update();
 
         level.setCam(cam);
         level.setupEnemies();
-        
     }
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         float screenX = Gdx.input.getX();
         float screenY = Gdx.input.getY();
         worldCoords = screenToWorld(screenX, screenY);
-        // -----------------------------------------------------------------------------
+
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-   
             System.out.println("Dünya Koordinatları: " + worldCoords.x + ", " + worldCoords.y);
         }
 
-        // -----------------------------------------------------------------------------
-        controlBar.updateMouseCoordinates(worldCoords.x, worldCoords.y);
-        // Oyun alanını çiz
+        controlBar.updateMouseCoordinates(worldCoords.x*1.25f, worldCoords.y);
+
         viewport.apply();
         batch.setProjectionMatrix(cam.combined);
+
         batch.begin();
+
         level.render(batch);
         level.start(delta, batch);
+
         batch.end();
+
         controlBar.render(batch);
 
         for (Tower tower : controlBar.getPlacedTowers()) {
             tower.update(delta, level.getCurrentWave().getEnemies());
         }
+
         batch.begin();
         for (Tower tower : controlBar.getPlacedTowers()) {
             tower.render(batch);
         }
         batch.end();
 
-        
         stage.act(delta);
         stage.draw();
 
@@ -101,41 +120,44 @@ public class GameScreen implements Screen {
         uiStage.act(delta);
         uiStage.draw();
     }
-    private com.badlogic.gdx.math.Vector3 screenToWorld(float screenX, float screenY) {
-        com.badlogic.gdx.math.Vector3 worldCoords = new com.badlogic.gdx.math.Vector3(screenX, screenY, 0);
+
+    private Vector3 screenToWorld(float screenX, float screenY) {
+        Vector3 worldCoords = new Vector3(screenX, screenY, 0);
         cam.unproject(worldCoords);
         return worldCoords;
     }
+
     @Override
     public void resize(int width, int height) {
-        int gameWidth = (int) (width * 0.8f);
-        int uiWidth = width - gameWidth;
+        int uiWidth = (int) (width * 0.2f);
+        int gameWidth = (int) (width - uiWidth);
 
         viewport.update(gameWidth, height, true);
         viewport.setScreenBounds(0, 0, gameWidth, height);
 
-        uiViewport.update(uiWidth, height, true);
+        cam.update();
         uiViewport.setScreenBounds(gameWidth, 0, uiWidth, height);
 
-        cam.setToOrtho(false, worldWidth, worldHeight);
-        cam.update();
-        uiCamera.setToOrtho(false, worldWidth * 0.2f, worldHeight);
         uiCamera.update();
 
-        controlBar.resize((int)worldWidth, (int)worldHeight);
+        controlBar.resize(uiWidth, height);
     }
 
     @Override
-    public void show() {}
+    public void show() {
+    }
 
     @Override
-    public void pause() {}
+    public void pause() {
+    }
 
     @Override
-    public void resume() {}
+    public void resume() {
+    }
 
     @Override
-    public void hide() {}
+    public void hide() {
+    }
 
     @Override
     public void dispose() {

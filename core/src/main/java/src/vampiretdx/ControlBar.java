@@ -3,7 +3,6 @@ package src.vampiretdx;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -55,7 +54,8 @@ public class ControlBar {
         topSection.add(moneyLabel).expandX().padBottom(10);
         topSection.row();
         topSection.add(healthLabel).expandX().padBottom(10);
-        mainTable.add(topSection).expandX().pad(10).top().row();
+
+        mainTable.add(topSection).expandX().pad(45, 0, 0, 0).top().row();
 
         // Middle section (Tower icons)
         Table middleSection = new Table();
@@ -76,19 +76,21 @@ public class ControlBar {
 
         for (int i = 0; i < towers.length; i++) {
             Tower tower = towers[i];
+
             Table cellTable = new Table();
             cellTable.setBackground(boxBackground);
 
-            ImageButton towerButton = createButton(tower.texture);
-            cellTable.add(towerButton).size(40, 40).center().pad(5);
-            middleSection.add(cellTable).size(50, 50).pad(5);
+            TextureRegion towerRegion = new TextureRegion(tower.getTexture());
+            ImageButton towerButton = new ImageButton(new TextureRegionDrawable(towerRegion));
+            cellTable.add(towerButton).size(60, 60);
+            middleSection.add(cellTable).size(70, 70).pad(10, 5, 25, 5).expand();
 
             if ((i + 1) % 2 == 0) {
                 middleSection.row();
             }
 
             // Handle tower button interaction
-            final Tower currentTower = tower;
+            Tower currentTower = tower;
             towerButton.addListener(new InputListener() {
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                     isPlacingTower = true;
@@ -142,11 +144,6 @@ public class ControlBar {
         return null;
     }
 
-    private ImageButton createButton(Texture texture) {
-        TextureRegionDrawable drawable = new TextureRegionDrawable(new TextureRegion(texture));
-        return new ImageButton(drawable);
-    }
-
     public void updateMouseCoordinates(float mouseX, float mouseY) {
         this.mouseX = mouseX;
         this.mouseY = mouseY;
@@ -155,11 +152,12 @@ public class ControlBar {
     public void render(Batch batch) {
         if (isPlacingTower && selectedTower != null) {
             batch.begin();
-            batch.draw(selectedTower.texture, mouseX, mouseY, selectedTower.getTexture().getWidth() * 0.1f,
-                    selectedTower.getTexture().getHeight() * 0.1f);
+            batch.draw(selectedTower.texture, mouseX, mouseY, 50,
+                50);
             batch.end();
         }
     }
+
     public void updateMoney(int newMoney) {
         moneyLabel.setText("Money: " + newMoney);
     }
