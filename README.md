@@ -36,7 +36,7 @@ Useful Gradle tasks and flags:
 - Bar logic Design
 - Weakness and Strength Features Against Different Ammo Types (?)
 - Tower's priority
-
+- Tower Place Logic
 
 ### Enemy Logic 
 - ~~Vampire(Default)~~ : **done**

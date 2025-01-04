@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.InputMultiplexer;
@@ -51,8 +50,7 @@ public class GameScreen implements Screen {
         // Viewportlar (StretchViewport kullanıldı)
         viewport = new StretchViewport(WORLD_WIDTH, WORLD_HEIGHT, cam);
         uiViewport = new StretchViewport(WORLD_WIDTH * 0.2f, WORLD_HEIGHT, uiCamera);
-        barViewport = new StretchViewport(WORLD_WIDTH, WORLD_HEIGHT*0.1f, barCamera);
-
+        barViewport = new StretchViewport(WORLD_WIDTH, WORLD_HEIGHT * 0.1f, barCamera);
 
         stage = new Stage(viewport, batch);
         uiStage = new Stage(uiViewport, batch);
@@ -86,7 +84,7 @@ public class GameScreen implements Screen {
             System.out.println("Dünya Koordinatları: " + worldCoords.x + ", " + worldCoords.y);
         }
 
-        controlBar.updateMouseCoordinates(worldCoords.x*1.25f, worldCoords.y);
+        controlBar.updateMouseCoordinates(worldCoords.x * 1.25f, worldCoords.y);
 
         viewport.apply();
         batch.setProjectionMatrix(cam.combined);
@@ -131,9 +129,9 @@ public class GameScreen implements Screen {
     public void resize(int width, int height) {
         int uiWidth = (int) (width * 0.15f);
         int gameWidth = (int) (width - uiWidth);
-        int gameHeight = (int)(height*0.85);
+        int gameHeight = (int) (height * 0.85);
         int boundHeight = height - gameHeight;
-        
+
         uiViewport.setScreenBounds(gameWidth, 0, uiWidth, height);
         viewport.setScreenBounds(0, boundHeight, gameWidth, gameHeight);
         barViewport.setScreenBounds(0, 0, gameWidth, boundHeight);

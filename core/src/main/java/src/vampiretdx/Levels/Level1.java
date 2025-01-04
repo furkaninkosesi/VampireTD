@@ -17,8 +17,6 @@ public class Level1 extends Level {
                 { 565f, 32f },
                 { 187f, 31f },
                 { 106f, 82.0f },
-                { 106f, 82.0f },
-                { 106f, 82.0f },
                 { 106f, 123f },
                 { 388f, 138.0f },
                 { 436, 387.0f }
@@ -40,30 +38,30 @@ public class Level1 extends Level {
         wave1.addEnemy(new Vampire(this));
         wave1.addEnemy(new Vampire(this));
         wave1.addEnemy(new Vampire(this));
-        wave1.addEnemy(new Vampire(this));        
-        wave1.addEnemy(new Vampire(this));        
-        wave1.addEnemy(new Vampire(this));        
-        wave1.addEnemy(new Vampire(this));        
-        wave1.addEnemy(new Vampire(this));        
-        wave1.addEnemy(new Vampire(this));        
-        wave1.addEnemy(new Vampire(this));        
-        wave1.addEnemy(new Vampire(this));        
-        wave1.addEnemy(new Vampire(this));        
-        wave1.addEnemy(new Vampire(this));        
-        wave1.addEnemy(new Vampire(this));        
-        wave1.addEnemy(new Vampire(this));        
-        wave1.addEnemy(new Vampire(this));        
-        wave1.addEnemy(new Vampire(this));        
-        wave1.addEnemy(new Vampire(this));        
-        wave1.addEnemy(new Vampire(this));        
-        wave1.addEnemy(new Vampire(this));        
-        wave1.addEnemy(new Vampire(this));        
-        wave1.addEnemy(new Vampire(this));        
-        wave1.addEnemy(new Vampire(this));        
-        wave1.addEnemy(new Vampire(this));        
-        wave1.addEnemy(new Vampire(this));        
-        wave1.addEnemy(new Vampire(this));        
-        wave1.addEnemy(new Vampire(this));        
+        wave1.addEnemy(new Vampire(this));
+        wave1.addEnemy(new Vampire(this));
+        wave1.addEnemy(new Vampire(this));
+        wave1.addEnemy(new Vampire(this));
+        wave1.addEnemy(new Vampire(this));
+        wave1.addEnemy(new Vampire(this));
+        wave1.addEnemy(new Vampire(this));
+        wave1.addEnemy(new Vampire(this));
+        wave1.addEnemy(new Vampire(this));
+        wave1.addEnemy(new Vampire(this));
+        wave1.addEnemy(new Vampire(this));
+        wave1.addEnemy(new Vampire(this));
+        wave1.addEnemy(new Vampire(this));
+        wave1.addEnemy(new Vampire(this));
+        wave1.addEnemy(new Vampire(this));
+        wave1.addEnemy(new Vampire(this));
+        wave1.addEnemy(new Vampire(this));
+        wave1.addEnemy(new Vampire(this));
+        wave1.addEnemy(new Vampire(this));
+        wave1.addEnemy(new Vampire(this));
+        wave1.addEnemy(new Vampire(this));
+        wave1.addEnemy(new Vampire(this));
+        wave1.addEnemy(new Vampire(this));
+        wave1.addEnemy(new Vampire(this));
         wave1.addEnemy(new Vampire(this));
         wave1.addEnemy(new Vampire(this));
         this.addWave(wave1);

@@ -155,7 +155,7 @@ public class ControlBar {
         if (isPlacingTower && selectedTower != null) {
             batch.begin();
             batch.draw(selectedTower.texture, mouseX, mouseY, 50,
-                50);
+                    50);
             batch.end();
         }
     }
