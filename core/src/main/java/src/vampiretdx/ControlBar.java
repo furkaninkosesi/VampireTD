@@ -42,7 +42,9 @@ public class ControlBar {
         mainTable.setBackground(new TextureRegionDrawable(new TextureRegion(backgroundTexture)));
 
         // Font and Style
-        BitmapFont font = new BitmapFont(Gdx.files.internal("default.fnt"));
+        // BitmapFont font = new BitmapFont(Gdx.files.internal("default.fnt"));
+        BitmapFont font = new BitmapFont();
+
         Label.LabelStyle labelStyle = new Label.LabelStyle(font, null);
 
         // Money and Health labels

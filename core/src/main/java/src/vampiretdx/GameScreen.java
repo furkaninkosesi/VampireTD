@@ -51,7 +51,7 @@ public class GameScreen implements Screen {
         // Viewportlar (StretchViewport kullanıldı)
         viewport = new StretchViewport(WORLD_WIDTH, WORLD_HEIGHT, cam);
         uiViewport = new StretchViewport(WORLD_WIDTH * 0.2f, WORLD_HEIGHT, uiCamera);
-        barViewport = new StretchViewport(WORLD_WIDTH, WORLD_HEIGHT*0.2f, barCamera);
+        barViewport = new StretchViewport(WORLD_WIDTH, WORLD_HEIGHT*0.1f, barCamera);
 
 
         stage = new Stage(viewport, batch);
@@ -129,15 +129,17 @@ public class GameScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        int uiWidth = (int) (width * 0.2f);
+        int uiWidth = (int) (width * 0.15f);
         int gameWidth = (int) (width - uiWidth);
-
-        viewport.update(gameWidth, height, true);
-        viewport.setScreenBounds(0, 0, gameWidth, height);
-
-        cam.update();
+        int gameHeight = (int)(height*0.85);
+        int boundHeight = height - gameHeight;
+        
         uiViewport.setScreenBounds(gameWidth, 0, uiWidth, height);
+        viewport.setScreenBounds(0, boundHeight, gameWidth, gameHeight);
+        barViewport.setScreenBounds(0, 0, gameWidth, boundHeight);
 
+        barCamera.update();
+        cam.update();
         uiCamera.update();
 
         controlBar.resize(uiWidth, height);

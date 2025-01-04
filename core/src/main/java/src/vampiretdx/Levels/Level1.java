@@ -41,7 +41,6 @@ public class Level1 extends Level {
         wave1.addEnemy(new Vampire(this));
         wave1.addEnemy(new Vampire(this));
         wave1.addEnemy(new Vampire(this));        
-        
         wave1.addEnemy(new Vampire(this));        
         wave1.addEnemy(new Vampire(this));        
         wave1.addEnemy(new Vampire(this));        
