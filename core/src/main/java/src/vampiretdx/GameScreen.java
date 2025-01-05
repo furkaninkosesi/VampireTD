@@ -84,7 +84,7 @@ public class GameScreen implements Screen {
             System.out.println("Dünya Koordinatları: " + worldCoords.x + ", " + worldCoords.y);
         }
 
-        controlBar.updateMouseCoordinates(worldCoords.x * 1.25f, worldCoords.y);
+        controlBar.updateMouseCoordinates(worldCoords.x, worldCoords.y);
 
         viewport.apply();
         batch.setProjectionMatrix(cam.combined);
@@ -93,10 +93,10 @@ public class GameScreen implements Screen {
 
         level.render(batch);
         level.start(delta, batch);
+        controlBar.render(batch);
 
         batch.end();
 
-        controlBar.render(batch);
 
         for (Tower tower : controlBar.getPlacedTowers()) {
             tower.update(delta, level.getCurrentWave().getEnemies());
@@ -119,12 +119,17 @@ public class GameScreen implements Screen {
         uiStage.draw();
     }
 
+    // private Vector3 screenToWorld(float screenX, float screenY) {
+    //     Vector3 worldCoords = new Vector3(screenX, screenY, 0);
+    //     cam.unproject(worldCoords);
+    //     return worldCoords;
+    // }
     private Vector3 screenToWorld(float screenX, float screenY) {
         Vector3 worldCoords = new Vector3(screenX, screenY, 0);
-        cam.unproject(worldCoords);
+        viewport.unproject(worldCoords); // Ekran koordinatlarını dünya koordinatlarına dönüştürür.
         return worldCoords;
     }
-
+    
     @Override
     public void resize(int width, int height) {
         int uiWidth = (int) (width * 0.15f);

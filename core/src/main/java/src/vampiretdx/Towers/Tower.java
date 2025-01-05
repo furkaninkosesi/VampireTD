@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-
+import src.vampiretdx.Config;
 import src.vampiretdx.Enemies.Enemy;
 
 public class Tower {
@@ -101,7 +101,7 @@ public class Tower {
 
     public void render(Batch batch) {
         // Tower'ı çiz
-        batch.draw(texture, x, y, 50, 50);
+        batch.draw(texture, x, y, Config.TOWER_SIZE_X, Config.TOWER_SIZE_Y);
 
         // Okları çiz
         for (Projectiles projectile : projectiles) {

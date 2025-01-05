@@ -14,12 +14,14 @@ public class Level1 extends Level {
     public Level1() {
         super(0, 0, new Texture("level1_map.png"));
         float[][] screenPathCoordinates = {
-                { 565f, 32f },
+                { 705f, 37f },
                 { 187f, 31f },
                 { 106f, 82.0f },
                 { 106f, 123f },
                 { 388f, 138.0f },
-                { 436, 387.0f }
+                { 436, 387.0f },
+                { 98.75f, 486f },
+                { 678.5f, 554.5f }
         };
         this.PathCoordinate = screenPathCoordinates;
         waweList = new ArrayList<>();

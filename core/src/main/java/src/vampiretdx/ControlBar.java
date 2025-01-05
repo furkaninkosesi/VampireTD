@@ -133,7 +133,7 @@ public class ControlBar {
         if (tower instanceof ArcherTower) {
             newTower = new ArcherTower();
         }
-        newTower.setPosition(x, y);
+        newTower.setPosition(x-(Config.TOWER_SIZE_X/2), y-(Config.TOWER_SIZE_Y/2));
         return newTower;
     }
 
@@ -153,10 +153,8 @@ public class ControlBar {
 
     public void render(Batch batch) {
         if (isPlacingTower && selectedTower != null) {
-            batch.begin();
-            batch.draw(selectedTower.texture, mouseX, mouseY, 50,
-                    50);
-            batch.end();
+            batch.draw(selectedTower.texture, mouseX-(Config.TOWER_SIZE_X/2), mouseY-(Config.TOWER_SIZE_Y/2), Config.TOWER_SIZE_X,
+            Config.TOWER_SIZE_Y);
         }
     }
 
