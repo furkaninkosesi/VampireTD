@@ -27,7 +27,7 @@ public class ControlBar {
     private float mouseX, mouseY;
     private Tower selectedTower;
     private ArrayList<Tower> placedTowers = new ArrayList<>();
-
+    private Stage seconStage;
     public ControlBar(Stage stage) {
         this.stage = stage;
 
@@ -115,11 +115,14 @@ public class ControlBar {
 
         mainTable.add(middleSection).expandX().pad(10).row();
     }
-
+    public void setSecondStage(Stage stage){
+        seconStage = stage;
+    }
     private void placeTower(float x, float y) {
         if (selectedTower != null) {
             Tower newTower = createTowerInstance(selectedTower, x, y);
             placedTowers.add(newTower);
+            seconStage.addActor(newTower);
             System.out.println("Tower placed at: " + x + ", " + y);
         }
     }
@@ -131,9 +134,8 @@ public class ControlBar {
     private Tower createTowerInstance(Tower tower, float x, float y) {
         Tower newTower = null;
         if (tower instanceof ArcherTower) {
-            newTower = new ArcherTower();
+            newTower = new ArcherTower(x - (Config.TOWER_SIZE_X / 2), y - (Config.TOWER_SIZE_Y / 2));
         }
-        newTower.setPosition(x-(Config.TOWER_SIZE_X/2), y-(Config.TOWER_SIZE_Y/2));
         return newTower;
     }
 
@@ -153,8 +155,9 @@ public class ControlBar {
 
     public void render(Batch batch) {
         if (isPlacingTower && selectedTower != null) {
-            batch.draw(selectedTower.texture, mouseX-(Config.TOWER_SIZE_X/2), mouseY-(Config.TOWER_SIZE_Y/2), Config.TOWER_SIZE_X,
-            Config.TOWER_SIZE_Y);
+            batch.draw(selectedTower.texture, mouseX - (Config.TOWER_SIZE_X / 2), mouseY - (Config.TOWER_SIZE_Y / 2),
+                    Config.TOWER_SIZE_X,
+                    Config.TOWER_SIZE_Y);
         }
     }
 

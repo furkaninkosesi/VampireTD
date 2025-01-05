@@ -60,7 +60,7 @@ public class GameScreen implements Screen {
 
         controlBar = new ControlBar(uiStage);
         Gdx.input.setInputProcessor(new InputMultiplexer(uiStage, stage));
-
+        controlBar.setSecondStage(stage);
         cam.position.set(WORLD_WIDTH / 2f, WORLD_HEIGHT / 2f, 0);
         cam.update();
 
@@ -97,7 +97,6 @@ public class GameScreen implements Screen {
 
         batch.end();
 
-
         for (Tower tower : controlBar.getPlacedTowers()) {
             tower.update(delta, level.getCurrentWave().getEnemies());
         }
@@ -119,17 +118,12 @@ public class GameScreen implements Screen {
         uiStage.draw();
     }
 
-    // private Vector3 screenToWorld(float screenX, float screenY) {
-    //     Vector3 worldCoords = new Vector3(screenX, screenY, 0);
-    //     cam.unproject(worldCoords);
-    //     return worldCoords;
-    // }
     private Vector3 screenToWorld(float screenX, float screenY) {
         Vector3 worldCoords = new Vector3(screenX, screenY, 0);
         viewport.unproject(worldCoords); // Ekran koordinatlarını dünya koordinatlarına dönüştürür.
         return worldCoords;
     }
-    
+
     @Override
     public void resize(int width, int height) {
         int uiWidth = (int) (width * 0.15f);

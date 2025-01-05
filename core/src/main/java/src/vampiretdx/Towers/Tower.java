@@ -4,10 +4,14 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+
 import src.vampiretdx.Config;
 import src.vampiretdx.Enemies.Enemy;
 
-public class Tower {
+public class Tower extends Actor {
     public String name;
     public Texture texture;
     public int rank = 0;
@@ -29,6 +33,35 @@ public class Tower {
         this.range = range;
         this.bullet_speed = bullet_speed;
         this.attackCooldown = attackCooldown;
+    }
+
+    public Tower(String name, Texture texture, int damage, int price, int range, float bullet_speed,
+            float attackCooldown, float x, float y) {
+        this.name = name;
+        this.texture = texture;
+        this.damage = damage;
+        this.price = price;
+        this.range = range;
+        this.bullet_speed = bullet_speed;
+        this.attackCooldown = attackCooldown;
+        this.x = x;
+        this.y = y;
+
+        addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                onTowerClicked();
+                return true;
+            }
+        });
+
+        // Tower boyutunu ayarla (Actor için gerekli)
+        setBounds(x, y, Config.TOWER_SIZE_X, Config.TOWER_SIZE_Y);
+    }
+
+    private void onTowerClicked() {
+        System.out.println("Kule tıklandı: " + name);
+        // Yükseltme ekranını veya özelliğini burada başlatabilirsiniz.
     }
 
     public void update(float deltaTime, ArrayList<Enemy> enemies) {
@@ -60,7 +93,7 @@ public class Tower {
             for (Enemy enemy : enemies) {
                 if (projectile.checkCollision(enemy)) {
                     enemy.takeDamage(projectile.getDamage());
-                    projectilesToRemove.add(projectile); 
+                    projectilesToRemove.add(projectile);
                     break;
                 }
             }
@@ -91,7 +124,8 @@ public class Tower {
     }
 
     private void shootAt(Enemy enemy) {
-        Projectiles projectile = new Projectiles(x, y, enemy.getX(), enemy.getY(), bullet_speed, damage, new Texture("arrow.png"));
+        Projectiles projectile = new Projectiles(x, y, enemy.getX(), enemy.getY(), bullet_speed, damage,
+                new Texture("arrow.png"));
         projectiles.add(projectile);
     }
 
@@ -105,8 +139,7 @@ public class Tower {
 
         // Okları çiz
         for (Projectiles projectile : projectiles) {
-            // batch.draw(projectile.getTexture(), projectile.getX(), projectile.getY(), 50, 50);
-            batch.draw(
+              batch.draw(
                     projectile.getTexture(),
                     projectile.getX(), projectile.getY(),
                     25, 25,
@@ -184,6 +217,7 @@ public class Tower {
         this.bullet_speed = bullet_speed;
     }
 
+    @Override
     public void setPosition(float x, float y) {
         this.x = x;
         this.y = y;
