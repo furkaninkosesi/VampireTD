@@ -19,6 +19,8 @@ import src.vampiretdx.Towers.ArcherTower;
 import src.vampiretdx.Towers.Tower;
 
 public class ControlBar {
+    private int money = 1000; // Oyuncunun başlangıç parası
+    private int health = 100; // Oyuncunun başlangıç sağlığı
     private Stage stage;
     private Table mainTable;
     private Label moneyLabel;
@@ -27,7 +29,8 @@ public class ControlBar {
     private float mouseX, mouseY;
     private Tower selectedTower;
     private ArrayList<Tower> placedTowers = new ArrayList<>();
-    private Stage seconStage;
+    private Stage secondStage;
+
     public ControlBar(Stage stage) {
         this.stage = stage;
 
@@ -115,15 +118,23 @@ public class ControlBar {
 
         mainTable.add(middleSection).expandX().pad(10).row();
     }
-    public void setSecondStage(Stage stage){
-        seconStage = stage;
+
+    public void setSecondStage(Stage stage) {
+        secondStage = stage;
     }
+
     private void placeTower(float x, float y) {
         if (selectedTower != null) {
-            Tower newTower = createTowerInstance(selectedTower, x, y);
-            placedTowers.add(newTower);
-            seconStage.addActor(newTower);
-            System.out.println("Tower placed at: " + x + ", " + y);
+            int towerCost = selectedTower.getCost();
+
+            if (spendMoney(towerCost)) { // Paranız yeterliyse kuleyi yerleştirin
+                Tower newTower = createTowerInstance(selectedTower, x, y);
+                placedTowers.add(newTower);
+                secondStage.addActor(newTower);
+                System.out.println("Tower placed at: " + x + ", " + y);
+            } else {
+                System.out.println("Not enough money to place the tower!");
+            }
         }
     }
 
@@ -167,6 +178,20 @@ public class ControlBar {
 
     public void updateHealth(int newHealth) {
         healthLabel.setText("Health: " + newHealth);
+    }
+
+    public void addMoney(int amount) {
+        money += amount;
+        updateMoney(money);
+    }
+
+    public boolean spendMoney(int amount) {
+        if (money >= amount) {
+            money -= amount;
+            updateMoney(money);
+            return true;
+        }
+        return false;
     }
 
     public void resize(int width, int height) {

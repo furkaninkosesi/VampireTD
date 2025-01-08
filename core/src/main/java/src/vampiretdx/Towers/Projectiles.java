@@ -55,7 +55,7 @@ public class Projectiles {
         }
 
         // Eğer 2 saniyeden fazla hareket etmiyorsa devre dışı bırak
-        if (timeSinceLastMove > 2f) {
+        if (timeSinceLastMove > 1f) {
             active = false;
         }
     }

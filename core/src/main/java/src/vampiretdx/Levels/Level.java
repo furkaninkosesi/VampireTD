@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import src.vampiretdx.ControlBar;
 
 public class Level {
     protected float spawnX;
@@ -13,6 +14,7 @@ public class Level {
     protected Texture levelTexture;
     protected float[][] PathCoordinate;
     protected OrthographicCamera cam;
+    protected ControlBar controlBar;
 
     public Level(float spawnX, float spawnY, Texture levelTexture) {
         this.spawnX = spawnX;
@@ -57,6 +59,14 @@ public class Level {
 
     public ArrayList<Wave> getWaweList() {
         return null;
+    }
+
+    public void setControlBar(ControlBar controlBar){
+        this.controlBar = controlBar;
+    }
+
+    public ControlBar getControlBar(){
+        return this.controlBar;
     }
 
     public void setupEnemies() {

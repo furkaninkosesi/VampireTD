@@ -68,6 +68,7 @@ public class GameScreen implements Screen {
         uiCamera.update();
 
         level.setCam(cam);
+        level.setControlBar(controlBar);
         level.setupEnemies();
     }
 

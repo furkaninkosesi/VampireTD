@@ -11,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import src.vampiretdx.Config;
 import src.vampiretdx.Enemies.Enemy;
 
-public class Tower extends Actor {
+public abstract class Tower extends Actor {
     public String name;
     public Texture texture;
     public int rank = 0;
@@ -149,7 +149,6 @@ public class Tower extends Actor {
                     0, 0,
                     projectile.getTexture().getWidth(), projectile.getTexture().getHeight(),
                     false, false);
-            System.out.println(projectile.getX() + " + " + projectile.getY());
         }
     }
 
@@ -172,7 +171,8 @@ public class Tower extends Actor {
     public int getRank() {
         return rank;
     }
-
+    public abstract int getCost();
+    
     public void setRank(int rank) {
         this.rank = rank;
     }

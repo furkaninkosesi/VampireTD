@@ -73,13 +73,16 @@ public class Enemy {
     public void dispose() {
         texture.dispose();
     }
+
     public void takeDamage(int damage) {
         health -= damage;
         if (health <= 0) {
-            // Düşman yok ediliyor
             System.out.println("Enemy defeated!");
+            level.getControlBar().addMoney(1); // Düşman öldüğünde 1$ ekleyin
+            isActive = false;
         }
     }
+
     public float getHealth() {
         return health;
     }
@@ -91,10 +94,13 @@ public class Enemy {
     public float getY() {
         return y;
     }
+
     public void setIsActive(boolean active) {
         isActive = active;
     }
+
     public boolean isActive() {
         return isActive;
     }
+
 }
