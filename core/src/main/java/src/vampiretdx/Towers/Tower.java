@@ -13,6 +13,7 @@ import src.vampiretdx.Enemies.Enemy;
 
 public abstract class Tower extends Actor {
     public String name;
+    public String priority = "closest";
     public Texture texture;
     public int rank = 0;
     public int damage;
@@ -22,7 +23,8 @@ public abstract class Tower extends Actor {
     private ArrayList<Projectiles> projectiles = new ArrayList<>();
     private float attackCooldown;; // Saniyede bir atış
     private float timeSinceLastAttack = 0f;
-    private float x, y; //
+    private float x, y;
+    private int upgradeCost[];
 
     public Tower(String name, Texture texture, int damage, int price, int range, float bullet_speed,
             float attackCooldown) {
@@ -33,10 +35,11 @@ public abstract class Tower extends Actor {
         this.range = range;
         this.bullet_speed = bullet_speed;
         this.attackCooldown = attackCooldown;
+
     }
 
     public Tower(String name, Texture texture, int damage, int price, int range, float bullet_speed,
-            float attackCooldown, float x, float y) {
+            float attackCooldown, float x, float y, int[] upgradeCost) {
         this.name = name;
         this.texture = texture;
         this.damage = damage;
@@ -46,7 +49,7 @@ public abstract class Tower extends Actor {
         this.attackCooldown = attackCooldown;
         this.x = x;
         this.y = y;
-
+        this.upgradeCost = upgradeCost;
         addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -69,7 +72,7 @@ public abstract class Tower extends Actor {
 
         // Atış yap
         if (timeSinceLastAttack >= attackCooldown) {
-            Enemy target = findClosestEnemy(enemies);
+            Enemy target = getTarget(enemies);
             if (target != null) {
                 shootAt(target);
                 timeSinceLastAttack = 0f;
@@ -123,6 +126,48 @@ public abstract class Tower extends Actor {
         return closest;
     }
 
+    private Enemy findFarthestEnemy(ArrayList<Enemy> enemies) {
+        Enemy farthest = null;
+        float farthestDistance = 0;
+
+        for (Enemy enemy : enemies) {
+            float dx = enemy.getX() - x;
+            float dy = enemy.getY() - y;
+            float distance = (float) Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < range && distance > farthestDistance) {
+                farthest = enemy;
+                farthestDistance = distance;
+            }
+        }
+        return farthest;
+    }
+
+    private Enemy findStrongestEnemy(ArrayList<Enemy> enemies) {
+        Enemy strongest = null;
+        float maxHealth = Float.MIN_VALUE;
+
+        for (Enemy enemy : enemies) {
+            if (enemy.getHealth() > maxHealth) {
+                strongest = enemy;
+                maxHealth = enemy.getHealth();
+            }
+        }
+        return strongest;
+    }
+
+    private Enemy findWeakestEnemy(ArrayList<Enemy> enemies) {
+        Enemy weakest = null;
+        float minHealth = Float.MAX_VALUE;
+        for (Enemy enemy : enemies) {
+            if (enemy.getHealth() < minHealth) {
+                weakest = enemy;
+                minHealth = enemy.getHealth();
+            }
+        }
+        return weakest;
+    }
+
     private void shootAt(Enemy enemy) {
         Projectiles projectile = new Projectiles(x, y, enemy.getX(), enemy.getY(), bullet_speed, damage,
                 new Texture("arrow.png"));
@@ -133,13 +178,17 @@ public abstract class Tower extends Actor {
         return projectiles;
     }
 
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+
     public void render(Batch batch) {
         // Tower'ı çiz
         batch.draw(texture, x, y, Config.TOWER_SIZE_X, Config.TOWER_SIZE_Y);
 
         // Okları çiz
         for (Projectiles projectile : projectiles) {
-              batch.draw(
+            batch.draw(
                     projectile.getTexture(),
                     projectile.getX(), projectile.getY(),
                     25, 25,
@@ -171,8 +220,9 @@ public abstract class Tower extends Actor {
     public int getRank() {
         return rank;
     }
+
     public abstract int getCost();
-    
+
     public void setRank(int rank) {
         this.rank = rank;
     }
@@ -221,5 +271,39 @@ public abstract class Tower extends Actor {
     public void setPosition(float x, float y) {
         this.x = x;
         this.y = y;
+    }
+
+    public int getUpgradeCost() {
+        return upgradeCost[rank];
+    }
+
+    public Enemy getTarget(ArrayList<Enemy> enemies) {
+        Enemy target;
+        switch (priority) {
+            case "closest":
+                target = findClosestEnemy(enemies);
+                break;
+            case "farthest":
+                target = findFarthestEnemy(enemies);
+                break;
+            case "strongest":
+                target = findStrongestEnemy(enemies);
+                break;
+            case "weakest":
+                target = findWeakestEnemy(enemies);
+                break;
+            default:
+                target = findClosestEnemy(enemies);
+                break;
+        }
+        return target;
+    }
+
+    public String getPriority() {
+        return priority;
+    }
+
+    public void upgrade() {
+
     }
 }
